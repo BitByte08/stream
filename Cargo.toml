@@ -42,9 +42,9 @@ section = "utils"
 priority = "optional"
 assets = [
     ["target/release/stream-cli", "usr/bin/", "755"],
+    ["debian/stream-cli-optimize.service", "etc/systemd/system/", "644"],
 ]
 conf-files = [
-    "/etc/systemd/system/stream-cli-optimize.service",
     "/etc/modprobe.d/stream-cli-blacklist.conf",
 ]
 maintainer-scripts = "debian/"

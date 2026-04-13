@@ -25,13 +25,13 @@
 ### 방법 1: 설치 스크립트 (권장)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/BitByte08/stream-cli/main/install.sh | sudo bash
+curl -sL https://raw.githubusercontent.com/BitByte08/stream/main/install.sh | sudo bash
 ```
 
 ### 방법 2: deb 패키지 직접 설치 (최신 버전 자동)
 
 ```bash
-wget "$(curl -sL https://api.github.com/repos/BitByte08/stream-cli/releases/latest | grep 'browser_download_url.*arm64.deb' | head -1 | cut -d'"' -f4)" -O stream-cli.deb
+wget "$(curl -sL https://api.github.com/repos/BitByte08/stream/releases/latest | grep 'browser_download_url.*arm64.deb' | head -1 | cut -d'"' -f4)" -O stream-cli.deb
 sudo dpkg -i stream-cli.deb
 sudo apt-get install -f -y
 ```
@@ -39,7 +39,7 @@ sudo apt-get install -f -y
 ### 방법 3: 소스 빌드
 
 ```bash
-curl -sL https://raw.githubusercontent.com/BitByte08/stream-cli/main/install.sh | sudo bash -s -- --source
+curl -sL https://raw.githubusercontent.com/BitByte08/stream/main/install.sh | sudo bash -s -- --source
 ```
 
 ---

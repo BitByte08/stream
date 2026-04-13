@@ -69,8 +69,22 @@ download_and_install() {
         exit 1
     fi
 
+    info "시스템 패키지 복구..."
+    sudo dpkg --configure -a
+    sudo apt-get install -f -y
+
     info "패키지 설치..."
-    sudo dpkg -i "$deb_path" || sudo apt-get install -f -y
+    sudo dpkg -i "$deb_path" || {
+        warn "의존성 해결 중..."
+        sudo apt-get install -f -y || {
+            err "패키지 의존성 문제. 수동 설치:"
+            echo "  sudo dpkg --configure -a"
+            echo "  sudo apt-get install -f -y"
+            echo "  sudo dpkg -i ${deb_path}"
+            exit 1
+        }
+        sudo dpkg -i "$deb_path"
+    }
 
     rm -rf "$tmpdir"
     ok "설치 완료!"
