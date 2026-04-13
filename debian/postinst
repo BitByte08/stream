@@ -1,0 +1,27 @@
+#!/bin/sh
+# stream-cli postinst
+set -e
+
+if [ "$1" = "configure" ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
+    systemctl enable stream-cli-optimize.service >/dev/null 2>&1 || true
+
+    echo ""
+    echo "=========================================="
+    echo " stream-cli 설치 완료"
+    echo "=========================================="
+    echo ""
+    echo " 최적화 즉시 적용:   sudo stream-cli optimize"
+    echo " 상태 확인:          stream-cli status"
+    echo " GPU 활성화:         sudo stream-cli gpu activate"
+    echo " 서비스 관리:        sudo stream-cli service manage"
+    echo " 드라이버 관리:      sudo stream-cli driver blacklist"
+    echo ""
+    echo " 부팅 시 자동 최적화 활성화됨."
+    echo "=========================================="
+    echo ""
+fi
+
+#DEBHELPER#
+
+exit 0

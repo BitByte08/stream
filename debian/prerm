@@ -1,0 +1,12 @@
+#!/bin/sh
+# stream-cli prerm
+set -e
+
+if [ "$1" = "remove" ] || [ "$1" = "upgrade" ]; then
+    systemctl stop stream-cli-optimize.service >/dev/null 2>&1 || true
+    systemctl disable stream-cli-optimize.service >/dev/null 2>&1 || true
+fi
+
+#DEBHELPER#
+
+exit 0

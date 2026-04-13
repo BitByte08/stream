@@ -1,0 +1,12 @@
+#!/bin/sh
+# stream-cli postrm
+set -e
+
+if [ "$1" = "purge" ]; then
+    rm -f /etc/modprobe.d/stream-cli-blacklist.conf
+    systemctl daemon-reload >/dev/null 2>&1 || true
+fi
+
+#DEBHELPER#
+
+exit 0
