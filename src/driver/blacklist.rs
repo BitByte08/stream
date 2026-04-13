@@ -17,7 +17,6 @@ pub struct BlacklistEntry {
 }
 
 const RECOMMENDED_MODULES: &[&str] = &[
-    "brcmfmac",
     "bluetooth",
     "btusb",
     "hci_uart",
