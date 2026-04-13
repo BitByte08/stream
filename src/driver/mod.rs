@@ -1,4 +1,5 @@
 pub mod blacklist;
+pub mod tui;
 
 use anyhow::{Context, Result};
 use std::fs;

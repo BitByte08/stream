@@ -2,11 +2,10 @@ use clap::{Parser, Subcommand};
 use stream_cli::{
     dep::{check_dependencies, install_all, install_missing, optional_packages, required_packages},
     driver::{
-        blacklist::{
-            apply_recommended, apply_selection, interactive_select, scan_loaded_modules,
-            show_status as blacklist_status,
-        },
-        load_module, unload_module,
+        blacklist::{apply_recommended, show_status as blacklist_status},
+        load_module,
+        tui::run_tui as blacklist_tui,
+        unload_module,
     },
     gpu::{activate, apply_cmdline_tweaks, config::GpuConfig, deactivate, detect as gpu_detect},
     service::{
@@ -245,11 +244,12 @@ fn handle_gpu(cmd: GpuCommands) -> anyhow::Result<()> {
 fn handle_driver(cmd: DriverCommands) -> anyhow::Result<()> {
     match cmd {
         DriverCommands::Blacklist => {
-            let entries = scan_loaded_modules()?;
-            let selected = interactive_select(&entries)?;
+            let selected = blacklist_tui()?;
             if !selected.is_empty() {
-                apply_selection(&selected)?;
-                println!("\n✅ 블랙리스트 적용 완료. 재부팅 권장.");
+                println!(
+                    "\n✅ {}개 모듈 블랙리스트 적용 완료. 재부팅 권장.",
+                    selected.len()
+                );
             }
         }
         DriverCommands::Status => blacklist_status()?,
