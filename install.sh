@@ -167,13 +167,47 @@ main() {
     if [ "$from_source" = true ]; then
         install_from_source
     else
-        local tag=$(get_latest_tag)
-        if [ -z "$tag" ]; then
+        info "릴리즈에서 .deb 조회..."
+        local download_url=""
+        local api_url="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest"
+        if command -v curl &>/dev/null; then
+            download_url=$(curl -sL "$api_url" | tr '"' '\n' | grep 'browser_download_url' -A1 | grep '.deb' | head -1)
+            if [ -z "$download_url" ]; then
+                download_url=$(curl -sL "$api_url" | python3 -c "import sys,json; r=json.load(sys.stdin); [print(a['browser_download_url']) for a in r.get('assets',[]) if a['name'].endswith('.deb')]" 2>/dev/null | head -1)
+            fi
+        elif command -v wget &>/dev/null; then
+            download_url=$(wget -qO- "$api_url" | tr '"' '\n' | grep 'browser_download_url' -A1 | grep '.deb' | head -1)
+        fi
+
+        if [ -n "$download_url" ]; then
+            info "다운로드: ${download_url}"
+            local tmpdir=$(mktemp -d)
+            local deb_path="${tmpdir}/stream-cli.deb"
+            if command -v curl &>/dev/null; then
+                curl -L "$download_url" -o "$deb_path"
+            else
+                wget "$download_url" -O "$deb_path"
+            fi
+
+            if [ -f "$deb_path" ] && [ -s "$deb_path" ]; then
+                info "시스템 패키지 복구..."
+                sudo dpkg --configure -a 2>/dev/null
+                sudo apt-get install -f -y 2>/dev/null
+                info "패키지 설치..."
+                sudo dpkg -i "$deb_path" || {
+                    warn "의존성 해결 중..."
+                    sudo apt-get install -f -y
+                    sudo dpkg -i "$deb_path"
+                }
+                rm -rf "$tmpdir"
+                ok "설치 완료!"
+            else
+                warn "다운로드 실패. 소스 빌드로 전환..."
+                install_from_source
+            fi
+        else
             warn "릴리즈를 찾을 수 없습니다. 소스 빌드로 전환..."
             install_from_source
-        else
-            info "최신 버전: ${tag}"
-            download_and_install "$tag"
         fi
     fi
 
