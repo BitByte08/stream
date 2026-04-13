@@ -2,7 +2,7 @@
 set -e
 
 REPO_OWNER="BitByte08"
-REPO_NAME="stream-cli"
+REPO_NAME="stream"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
