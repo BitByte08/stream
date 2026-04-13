@@ -50,17 +50,32 @@ get_latest_tag() {
 
 download_and_install() {
     local tag=$1
-    local deb_name="stream-cli_${tag#v}_arm64.deb"
-    local url="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${tag}/${deb_name}"
 
-    info "다운로드: ${url}"
+    info "릴리즈에서 .deb 다운로드 URL 조회..."
+    local download_url=""
+    if command -v curl &>/dev/null; then
+        download_url=$(curl -sL "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/tags/${tag}" \
+            | grep '"browser_download_url".*\.deb"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+    elif command -v wget &>/dev/null; then
+        download_url=$(wget -qO- "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/tags/${tag}" \
+            | grep '"browser_download_url".*\.deb"' | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+    fi
+
+    if [ -z "$download_url" ]; then
+        err ".deb 파일을 찾을 수 없습니다."
+        echo "  https://github.com/${REPO_OWNER}/${REPO_NAME}/releases"
+        return 1
+    fi
+
     local tmpdir=$(mktemp -d)
-    local deb_path="${tmpdir}/${deb_name}"
+    local deb_path="${tmpdir}/stream-cli.deb"
+
+    info "다운로드: ${download_url}"
 
     if command -v curl &>/dev/null; then
-        curl -sL "$url" -o "$deb_path"
+        curl -sL "$download_url" -o "$deb_path"
     else
-        wget -q "$url" -O "$deb_path"
+        wget -q "$download_url" -O "$deb_path"
     fi
 
     if [ ! -f "$deb_path" ] || [ ! -s "$deb_path" ]; then
