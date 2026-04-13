@@ -1,16 +1,9 @@
 use anyhow::{Context, Result};
 use std::process::Command;
 
-const REQUIRED_PACKAGES: &[&str] = &[
-    "mpv",
-    "ffmpeg",
-    "libraspberrypi0",
-    "libdrm2",
-    "mesa-utils",
-    "firmware-linux-nonfree",
-];
+const REQUIRED_PACKAGES: &[&str] = &["mpv", "ffmpeg", "libdrm2", "mesa-utils"];
 
-const OPTIONAL_PACKAGES: &[&str] = &["v4l-utils", "libva2", "i965-va-driver"];
+const OPTIONAL_PACKAGES: &[&str] = &["v4l-utils", "libva2"];
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct DepStatus {

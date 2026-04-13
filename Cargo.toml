@@ -1,6 +1,6 @@
 [package]
 name = "stream-cli"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "CLI utility for Raspberry Pi 4B GPU/driver management and 4K 60fps streaming optimization"
 authors = ["user"]
