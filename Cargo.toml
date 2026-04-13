@@ -1,0 +1,48 @@
+[package]
+name = "stream-cli"
+version = "0.1.0"
+edition = "2021"
+description = "CLI utility for Raspberry Pi 4B GPU/driver management and 4K 60fps streaming optimization"
+authors = ["user"]
+license = "MIT"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive", "color"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
+[dev-dependencies]
+tempfile = "3.10"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.release.package."*"]
+opt-level = 3
+
+[[bin]]
+name = "stream-cli"
+path = "src/main.rs"
+
+[package.metadata.deb]
+maintainer = "user"
+copyright = "2025, user"
+depends = "mpv, ffmpeg"
+section = "utils"
+priority = "optional"
+assets = [
+    ["target/release/stream-cli", "usr/bin/", "755"],
+]
+conf-files = [
+    "/etc/systemd/system/stream-cli-optimize.service",
+    "/etc/modprobe.d/stream-cli-blacklist.conf",
+]
+maintainer-scripts = "debian/"
